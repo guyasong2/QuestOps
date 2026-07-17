@@ -1,28 +1,15 @@
-
-
-
-export default function navBar() {
+export default function NavBar() {
   return (
-      <>
-          <div>
-          <nav className="navbar navbar-expand-lg navbar-light bg-light flex flex-row w-full h-16 justify-between items-center border-b-3 border-black px-6" style={{ fontFamily: '"Chakra Petch", sans-serif' }}>
-                  <div className="navbar-brand font-bold">
-                      <img src="/QuestOps_logo.png" alt="Logo" className="h-10 w-auto" />
-                  </div>
-                  
-                  <ul className="navbar-nav flex gap-6 items-center">
-                      <li className="nav-item border-b-2 border-black font-bold">
-                          <a className="nav-link" href="/" style={{ fontFamily: '"Chakra Petch", sans-serif' }}>Home</a>
-                      </li>
-                      <li className="nav-item font-bold">
-                          <a className="nav-link"  href="/login" style={{ fontFamily: '"Chakra Petch", sans-serif' }}>Login</a>
-                      </li>
-                      <li className="nav-item font-bold">
-                          <button className="nav-link bg-green-600 text-white px-4 py-2 rounded hover:bg-green-400" style={{ fontFamily: '"Chakra Petch", sans-serif' }}>Get Started</button>
-                      </li>
-                  </ul> 
-          </nav>
-          </div>    
-      </>
-  )
+    <header className="site-header">
+      <a className="brand focusable" href="/" aria-label="QuestOps home">
+        <img src="/QuestOps_logo.png" alt="QuestOps" />
+      </a>
+
+      <nav className="site-nav" aria-label="Primary navigation">
+        <a className="focusable" href="/" aria-current="page">Home</a>
+        <a className="focusable" href="/login">Login</a>
+        <button className="nav-cta focusable" type="button">Get started</button>
+      </nav>
+    </header>
+  );
 }
