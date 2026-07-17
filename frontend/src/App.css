@@ -174,6 +174,154 @@
   stroke-width: 2.2px;
 }
 
+.how-it-works {
+  display: grid;
+  grid-template-columns: minmax(230px, .85fr) minmax(440px, 1.65fr);
+  max-width: 1180px;
+  margin: 90px auto 58px;
+  border: 3px solid #111214;
+  box-shadow: 4px 4px 0 #111214;
+  background: #fff;
+  font-family: "Chakra Petch", sans-serif;
+}
+
+.workflow-intro {
+  padding: 26px 22px;
+  border-right: 3px solid #111214;
+}
+
+.workflow-intro h2,
+.workflow-steps h3,
+.proficiency-banner h2,
+.site-footer strong {
+  margin: 0;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.workflow-intro h2 {
+  display: inline-block;
+  border-bottom: 3px solid #b7ed00;
+  font-size: 24px;
+  line-height: .95;
+}
+
+.workflow-intro p,
+.workflow-steps p {
+  margin: 16px 0 0;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.terminal-snippet {
+  display: grid;
+  gap: 2px;
+  margin-top: 23px;
+  padding: 12px 14px;
+  background: #050505;
+  color: #fff;
+  font-family: "Chakra Petch", monospace;
+  font-size: 11px;
+}
+
+.workflow-steps {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.workflow-steps li {
+  display: grid;
+  grid-template-columns: 62px 1fr;
+  gap: 8px;
+  min-height: 91px;
+  padding: 17px 18px;
+  border-bottom: 3px solid #111214;
+}
+
+.workflow-steps li:last-child { border-bottom: 0; }
+
+.step-number {
+  color: #e7e7e7;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: .9;
+}
+
+.workflow-steps h3 {
+  font-size: 19px;
+  line-height: 1;
+}
+
+.workflow-steps p { margin-top: 8px; }
+
+.proficiency-banner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+  max-width: 1180px;
+  margin: 0 auto 62px;
+  overflow: hidden;
+  border: 3px solid #111214;
+  box-shadow: 4px 4px 0 #111214;
+  background-color: #0a0b0b;
+  background-image:
+    linear-gradient(90deg, rgba(0, 0, 0, .75), rgba(0, 0, 0, .15), rgba(0, 0, 0, .75)),
+    repeating-linear-gradient(0deg, transparent 0 18px, rgba(100, 100, 100, .18) 19px 20px),
+    repeating-linear-gradient(90deg, transparent 0 100px, rgba(90, 90, 90, .13) 101px 102px);
+}
+
+.proficiency-banner::before {
+  position: absolute;
+  inset: 26px;
+  border: 1px solid rgba(255, 255, 255, .17);
+  content: "";
+}
+
+.proficiency-banner h2 {
+  position: relative;
+  z-index: 1;
+  color: #fff;
+  font-size: clamp(35px, 5.8vw, 72px);
+  font-style: italic;
+  letter-spacing: -.07em;
+  line-height: .81;
+  text-align: center;
+  transform: skewX(-5deg);
+}
+
+.terminal-lines {
+  position: absolute;
+  top: 30px;
+  left: 28px;
+  display: grid;
+  gap: 8px;
+  color: rgba(255, 255, 255, .27);
+  font: 10px/1 "Chakra Petch", monospace;
+}
+
+.terminal-lines-right { right: 28px; left: auto; text-align: right; }
+
+.site-footer {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 22px;
+  padding: 27px max(20px, calc((100vw - 1180px) / 2));
+  background: #050505;
+  color: #fff;
+  font-family: "Chakra Petch", sans-serif;
+}
+
+.site-footer strong { font-size: 30px; letter-spacing: -.07em; }
+.site-footer p { margin: 4px 0 0; font-size: 9px; text-transform: uppercase; }
+.site-footer nav { display: flex; align-items: start; flex-wrap: wrap; justify-content: flex-end; gap: 18px; }
+.site-footer a { color: #fff; font-size: 10px; text-decoration: underline; text-underline-offset: 3px; }
+.site-footer a span { color: #b7ed00; }
+.footer-meta { display: flex; grid-column: 1 / -1; justify-content: space-between; color: #8c8c8c; font: 8px/1 "Chakra Petch", monospace; text-transform: uppercase; }
+
 @media (max-width: 620px) {
   .site-header {
     height: 60px;
@@ -235,4 +383,23 @@
     border-top: 2px solid #fff;
     border-left: 0;
   }
+
+  .how-it-works {
+    grid-template-columns: 1fr;
+    margin: 48px 16px;
+  }
+
+  .workflow-intro { border-right: 0; border-bottom: 3px solid #111214; }
+  .workflow-steps li { min-height: 76px; grid-template-columns: 52px 1fr; padding: 14px; }
+  .workflow-intro h2 { font-size: 21px; }
+  .workflow-steps h3 { font-size: 17px; }
+  .step-number { font-size: 23px; }
+
+  .proficiency-banner { min-height: 230px; margin: 0 16px 48px; }
+  .terminal-lines { top: 18px; left: 15px; font-size: 7px; }
+  .terminal-lines-right { display: none; }
+
+  .site-footer { grid-template-columns: 1fr; padding: 24px 18px; }
+  .site-footer nav { justify-content: flex-start; gap: 11px; }
+  .footer-meta { gap: 8px; justify-content: flex-start; flex-wrap: wrap; }
 }
