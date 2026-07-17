@@ -1,11 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   HiOutlineTerminal,
-  HiOutlineXCircle,
-  HiOutlineCheckCircle,
-  HiOutlineInformationCircle,
-  HiOutlinePaperAirplane,
 } from 'react-icons/hi';
 
 // Simulated Linux filesystem & command responses

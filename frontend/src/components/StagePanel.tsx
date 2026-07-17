@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Stage } from '../lib/api';
-import CodeEditor from './CodeEditor';
-import TerminalEmulator from './TerminalEmulator';
+import { CodeSandbox } from './CodeEditor';
+import { TerminalSandbox } from './TerminalEmulator';
+import { DragDropStage } from './DragDropStage';
 
 interface StagePanelProps {
   stage: Stage | null;
@@ -19,18 +20,13 @@ export default function StagePanel({ stage, onClose, onSubmit, isSubmitting, hin
   if (!stage) return null;
 
   const handleSubmit = (answerOverride?: string) => {
-    if (answerOverride) {
+    if (answerOverride !== undefined) {
       onSubmit(answerOverride);
       return;
     }
-    
     if (stage.answer_type === 'mcq') {
       onSubmit(mcqAnswer);
-    } else if (stage.answer_type === 'free_text') {
-      onSubmit(freeTextAnswer);
-    } else if (stage.answer_type === 'drag_drop') {
-      // For simplicity in the hackathon, we are skipping drag and drop implementation 
-      // but keeping the type. We will just render a simple textarea for now if it slips through.
+    } else {
       onSubmit(freeTextAnswer);
     }
   };
@@ -102,7 +98,7 @@ export default function StagePanel({ stage, onClose, onSubmit, isSubmitting, hin
                   onChange={(e) => setFreeTextAnswer(e.target.value)}
                   placeholder="Explain your technical reasoning..."
                   className="w-full h-32 bg-[#1C1A1A] border border-gray-700 rounded p-4 text-sm text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none resize-none"
-                  spellCheck="false"
+                  spellCheck={false}
                 />
                 <button
                   onClick={() => handleSubmit()}
@@ -115,42 +111,30 @@ export default function StagePanel({ stage, onClose, onSubmit, isSubmitting, hin
             )}
 
             {stage.answer_type === 'code_editor' && (
-              <CodeEditor 
-                onSubmit={(code) => handleSubmit(code)} 
-                disabled={isSubmitting} 
+              <CodeSandbox
+                onSubmit={(code: string) => handleSubmit(code)}
+                disabled={isSubmitting}
               />
             )}
 
             {stage.answer_type === 'terminal' && (
-              <TerminalEmulator 
-                onSubmit={(cmd) => handleSubmit(cmd)} 
-                disabled={isSubmitting} 
+              <TerminalSandbox
+                onSubmit={(cmd: string) => handleSubmit(cmd)}
+                disabled={isSubmitting}
               />
             )}
-            
+
             {stage.answer_type === 'drag_drop' && (
-                <div className="space-y-4">
-                  <div className="text-sm text-yellow-500 mb-2">Note: Please enter the steps sequentially separated by commas.</div>
-                  <textarea
-                    value={freeTextAnswer}
-                    onChange={(e) => setFreeTextAnswer(e.target.value)}
-                    placeholder='e.g. ["Step A", "Step B"]'
-                    className="w-full h-32 bg-[#1C1A1A] border border-gray-700 rounded p-4 text-sm text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none resize-none font-mono"
-                    spellCheck="false"
-                  />
-                  <button
-                    onClick={() => handleSubmit()}
-                    disabled={!freeTextAnswer.trim() || isSubmitting}
-                    className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-medium py-3 px-4 rounded transition-colors"
-                  >
-                    {isSubmitting ? 'Checking Sequence...' : 'Submit Sequence'}
-                  </button>
-                </div>
+              <DragDropStage
+                items={stage.drag_items}
+                onSubmit={(ordered) => handleSubmit(JSON.stringify(ordered))}
+                disabled={isSubmitting}
+              />
             )}
           </div>
 
           {hint && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               className="p-4 bg-red-500/10 border border-red-500/20 rounded text-red-400 text-sm flex gap-3 items-start"

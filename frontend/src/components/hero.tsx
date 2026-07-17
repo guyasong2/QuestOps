@@ -1,4 +1,5 @@
-import NavBar from "./navBar";
+import { useNavigate } from 'react-router-dom';
+import NavBar from "../components/navBar";
 
 const capabilities = ["Cybersecurity", "Software engineering", "Cloud infrastructure"];
 
@@ -6,15 +7,15 @@ function CapabilityIcon({ label }: { label: string }) {
   if (label === "Cybersecurity") {
     return <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="10" width="12" height="10" rx="1" /><path d="M9 10V7a3 3 0 0 1 6 0v3" /><circle cx="12" cy="15" r="1" /></svg>;
   }
-
   if (label === "Software engineering") {
     return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 8-4 4 4 4M16 8l4 4-4 4M14 5l-4 14" /></svg>;
   }
-
   return <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 18h10a4 4 0 1 0-.8-7.9A5.5 5.5 0 0 0 6 12.5 2.8 2.8 0 0 0 7 18Z" /></svg>;
 }
 
 export default function Hero() {
+  const navigate = useNavigate();
+
   return (
     <main className="landing-page">
       <NavBar />
@@ -32,7 +33,11 @@ export default function Hero() {
             cybersecurity, software engineering, cloud.
           </p>
 
-          <button className="session-button focusable" type="button">
+          <button
+            className="session-button focusable"
+            type="button"
+            onClick={() => navigate('/onboarding')}
+          >
             Initialize session
           </button>
         </div>

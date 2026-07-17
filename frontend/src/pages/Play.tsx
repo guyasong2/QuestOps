@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
@@ -282,15 +282,9 @@ export default function Play() {
     );
   }
 
-  const trackSlug = scenario.stages[0]?.scenario?.toString() || 'software'; // fallback
-  const scene = TRACK_SCENES['software']; // We'll detect from track later
-
-  // Detect which track this scenario belongs to from its stage types
-  const hasCyberPattern = scenario.stages.some(
-    (s) => s.answer_type === 'terminal' || s.label === 'detect'
-  );
-
-  const sceneKey = hasCyberPattern ? 'cybersecurity' : 'software';
+  const sceneKey = scenario.stages.some((s) => s.answer_type === 'terminal')
+    ? 'cybersecurity'
+    : 'software';
   const sceneStyle = TRACK_SCENES[sceneKey];
 
   // The right panel width depends on whether a sandbox is open

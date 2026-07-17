@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { useState } from 'react';
 import Editor from 'react-simple-code-editor';
 import Prism from 'prismjs';
 import 'prismjs/components/prism-python';
@@ -15,7 +15,7 @@ import {
 } from 'react-icons/hi';
 
 interface CodeSandboxProps {
-  prompt: string;
+  prompt?: string;
   artifact?: string;
   onSubmit: (code: string) => void;
   disabled?: boolean;
@@ -26,7 +26,7 @@ const STARTER_COMMENTS: Record<string, string> = {
   bash: '#!/bin/bash\n# Write your command sequence here\n',
 };
 
-export function CodeSandbox({ prompt, artifact, onSubmit, disabled }: CodeSandboxProps) {
+export function CodeSandbox({ onSubmit, disabled }: CodeSandboxProps) {
   const [code, setCode] = useState(STARTER_COMMENTS.python);
   const [language, setLanguage] = useState<'python' | 'bash'>('python');
   const [output, setOutput] = useState<string | null>(null);
