@@ -9,7 +9,7 @@ export default function Home() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-md w-full bg-surface border border-border rounded-xl p-8 shadow-2xl text-center"
+        className="max-w-md w-full bg-surface border-[3px] border-text rounded-xl p-8 shadow-[8px_8px_0_#111214] border-[3px] border-text text-center"
       >
         <div className="text-6xl mb-6">🧪</div>
         <h1 className="text-3xl font-bold text-text mb-2 tracking-tight">Escape the Lab</h1>
@@ -20,14 +20,14 @@ export default function Home() {
         <div className="space-y-4">
           <button
             onClick={() => navigate('/onboarding')}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors"
+            className="w-full bg-blue-500 hover:bg-blue-600 text-text border-[3px] border-text shadow-[4px_4px_0_#111214] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_#111214] font-semibold py-3 px-4 rounded-lg transition-colors"
           >
             Get Started
           </button>
           
           <button
             onClick={() => navigate('/login')}
-            className="w-full bg-surface hover:bg-border text-text font-semibold py-3 px-4 rounded-lg border border-border transition-colors"
+            className="w-full bg-surface hover:bg-border text-text font-semibold py-3 px-4 rounded-lg border-[3px] border-text transition-colors"
           >
             Login
           </button>

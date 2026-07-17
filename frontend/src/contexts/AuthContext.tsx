@@ -6,6 +6,8 @@ interface User {
   email: string;
   fullname: string;
   career_paths: string[];
+  avatar: string | null;
+  bio: string;
 }
 
 interface AuthContextType {

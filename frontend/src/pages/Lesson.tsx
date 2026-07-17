@@ -68,7 +68,7 @@ export default function Lesson() {
         ]);
       } catch {
         toast.error('Failed to load scenario briefing.');
-        navigate('/catalog');
+        navigate('/dashboard');
       } finally {
         setLoadingScenario(false);
       }
@@ -140,10 +140,10 @@ export default function Lesson() {
   return (
     <div className="h-screen bg-bg flex flex-col overflow-hidden text-text">
       {/* Top Bar */}
-      <header className="h-14 bg-surface border-b border-border flex items-center justify-between px-6 shrink-0 shadow-sm z-10">
+      <header className="h-14 bg-surface border-b border-border flex items-center justify-between px-6 shrink-0 shadow-[2px_2px_0_#111214] border-2 border-text z-10">
         <div className="flex items-center gap-3">
           <button
-            onClick={() => navigate('/catalog')}
+            onClick={() => navigate('/dashboard')}
             className="text-text-muted hover:text-text transition-colors flex items-center gap-1.5 text-sm"
           >
             <HiOutlineArrowLeft className="w-4 h-4" />
@@ -156,7 +156,7 @@ export default function Lesson() {
 
         <button
           onClick={handleStartSimulation}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-4 py-2 rounded-lg shadow transition-colors"
+          className="flex items-center gap-2 bg-blue-500 hover:bg-blue-600 text-text border-[3px] border-text shadow-[4px_4px_0_#111214] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_#111214] text-sm font-bold px-4 py-2 rounded-lg shadow transition-colors"
         >
           <HiOutlinePlay className="w-4 h-4" />
           Start Simulation
@@ -164,9 +164,9 @@ export default function Lesson() {
       </header>
 
       {/* Main Layout */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
         {/* Left Panel — Lesson Content */}
-        <aside className="w-1/2 border-r border-border overflow-y-auto bg-surface p-8">
+        <aside className="w-full md:w-1/2 flex-1 md:flex-none border-b md:border-b-0 md:border-r border-border overflow-y-auto bg-surface p-4 sm:p-8">
           {/* Scenario Header */}
           <div className="mb-8 pb-6 border-b border-border">
             <div className="flex items-center gap-2 mb-3">
@@ -219,7 +219,7 @@ export default function Lesson() {
                         {children}
                       </code>
                     ) : (
-                      <pre className="bg-gray-900 text-green-400 font-mono text-xs p-4 rounded-lg overflow-x-auto my-4 border border-gray-700">
+                      <pre className="bg-gray-900 text-green-400 font-mono text-xs p-4 rounded-lg overflow-x-auto my-4 border-[3px] border-text">
                         <code>{children}</code>
                       </pre>
                     ),
@@ -244,11 +244,11 @@ export default function Lesson() {
         </aside>
 
         {/* Right Panel — AI Tutor Chat */}
-        <div className="w-1/2 flex flex-col bg-bg overflow-hidden">
+        <div className="w-full md:w-1/2 flex-1 md:flex-none flex flex-col bg-bg overflow-hidden">
           {/* Chat Header */}
           <div className="px-6 py-4 border-b border-border bg-surface flex items-center gap-3 shrink-0">
             <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
-              <HiOutlineChat className="w-4 h-4 text-white" />
+              <HiOutlineChat className="w-4 h-4 text-text" />
             </div>
             <div>
               <p className="font-bold text-text text-sm">AI Tutor</p>
@@ -274,7 +274,7 @@ export default function Lesson() {
                   <div
                     className={`w-8 h-8 rounded-full shrink-0 flex items-center justify-center font-bold text-xs ${
                       msg.role === 'user'
-                        ? 'bg-blue-600 text-white'
+                        ? 'bg-blue-500 text-text border-2 border-text shadow-[2px_2px_0_#111214]'
                         : 'bg-gray-200 text-gray-600'
                     }`}
                   >
@@ -285,8 +285,8 @@ export default function Lesson() {
                   <div
                     className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                       msg.role === 'user'
-                        ? 'bg-blue-600 text-white rounded-tr-sm'
-                        : 'bg-surface border border-border text-text rounded-tl-sm'
+                        ? 'bg-blue-500 text-text border-2 border-text shadow-[2px_2px_0_#111214] rounded-tr-sm'
+                        : 'bg-surface border-[3px] border-text text-text rounded-tl-sm'
                     }`}
                   >
                     {msg.role === 'assistant' ? (
@@ -338,7 +338,7 @@ export default function Lesson() {
                   <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">
                     <HiOutlineChip className="w-4 h-4 text-gray-600" />
                   </div>
-                  <div className="bg-surface border border-border rounded-2xl rounded-tl-sm px-4 py-3">
+                  <div className="bg-surface border-[3px] border-text rounded-2xl rounded-tl-sm px-4 py-3">
                     <TypingDots />
                   </div>
                 </motion.div>
@@ -358,7 +358,7 @@ export default function Lesson() {
                 <button
                   key={prompt}
                   onClick={() => { setInput(prompt); inputRef.current?.focus(); }}
-                  className="text-xs border border-border text-text-muted hover:border-blue-400 hover:text-blue-600 px-3 py-1.5 rounded-full transition-colors"
+                  className="text-xs border-[3px] border-text text-text-muted hover:border-blue-400 hover:text-blue-600 px-3 py-1.5 rounded-full transition-colors"
                 >
                   {prompt}
                 </button>
@@ -376,12 +376,12 @@ export default function Lesson() {
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={handleKeyDown}
                 placeholder="Ask the AI tutor anything about this scenario… (Enter to send, Shift+Enter for newline)"
-                className="flex-1 bg-bg border border-border text-text placeholder-text-muted rounded-xl px-4 py-3 text-sm resize-none focus:outline-none focus:border-blue-400 transition-colors"
+                className="flex-1 bg-bg border-[3px] border-text text-text placeholder-text-muted rounded-xl px-4 py-3 text-sm resize-none focus:outline-none focus:border-blue-400 transition-colors"
               />
               <button
                 onClick={handleSend}
                 disabled={!input.trim() || isTyping}
-                className="w-10 h-10 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed text-white rounded-xl flex items-center justify-center shrink-0 transition-colors shadow"
+                className="w-10 h-10 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed text-text rounded-xl flex items-center justify-center shrink-0 transition-colors shadow"
               >
                 <HiOutlinePaperAirplane className="w-5 h-5 rotate-90" />
               </button>

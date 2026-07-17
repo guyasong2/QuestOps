@@ -38,10 +38,10 @@ export default function Hotspot({ label, onClick, status, x, y }: HotspotProps) 
       )}
       
       {/* Core dot */}
-      <div className={`relative w-4 h-4 rounded-full shadow-lg ${bgColor} z-10 transition-colors`} />
+      <div className={`relative w-4 h-4 rounded-full shadow-[4px_4px_0_#111214] border-[3px] border-text ${bgColor} z-10 transition-colors`} />
       
       {/* Label popup */}
-      <div className="absolute top-6 left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity bg-black border border-gray-700 text-white text-xs px-2 py-1 rounded font-mono z-20 pointer-events-none">
+      <div className="absolute top-6 left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity bg-black border-[3px] border-text text-text text-xs px-2 py-1 rounded font-mono z-20 pointer-events-none">
         {label}
       </div>
     </div>

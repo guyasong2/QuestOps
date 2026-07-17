@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../contexts/AuthContext';
 import { register, getMe } from '../lib/api';
+import { HiOutlineArrowLeft } from 'react-icons/hi';
 
 const CAREER_PATHS = [
   { id: 'software', label: 'Software Engineering', icon: '💻' },
@@ -56,7 +57,7 @@ export default function Onboarding() {
       localStorage.setItem('token', res.token);
       const user = await getMe();
       loginUser(res.token, user);
-      navigate('/catalog');
+      navigate('/dashboard');
     } catch (err: any) {
       setError(err.message || 'Registration failed');
     } finally {
@@ -81,6 +82,12 @@ export default function Onboarding() {
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 20 }}
             >
+              <button 
+                onClick={() => navigate('/')}
+                className="text-text-muted hover:text-text mb-6 text-sm flex items-center gap-1"
+              >
+                <HiOutlineArrowLeft className="w-4 h-4" /> Home
+              </button>
               <h1 className="text-3xl font-bold mb-2">Create Account</h1>
               <p className="text-text-muted mb-8">Enter your details to join Escape the Lab.</p>
 
@@ -90,7 +97,7 @@ export default function Onboarding() {
                   <input
                     type="text"
                     required
-                    className="w-full bg-surface border border-border rounded-lg p-3 text-text focus:border-blue-500 focus:outline-none"
+                    className="w-full bg-surface border-[3px] border-text rounded-lg p-3 text-text focus:border-blue-500 focus:outline-none"
                     value={formData.fullname}
                     onChange={(e) => setFormData({ ...formData, fullname: e.target.value })}
                   />
@@ -100,7 +107,7 @@ export default function Onboarding() {
                   <input
                     type="text"
                     required
-                    className="w-full bg-surface border border-border rounded-lg p-3 text-text focus:border-blue-500 focus:outline-none"
+                    className="w-full bg-surface border-[3px] border-text rounded-lg p-3 text-text focus:border-blue-500 focus:outline-none"
                     value={formData.username}
                     onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                   />
@@ -110,7 +117,7 @@ export default function Onboarding() {
                   <input
                     type="email"
                     required
-                    className="w-full bg-surface border border-border rounded-lg p-3 text-text focus:border-blue-500 focus:outline-none"
+                    className="w-full bg-surface border-[3px] border-text rounded-lg p-3 text-text focus:border-blue-500 focus:outline-none"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   />
@@ -120,7 +127,7 @@ export default function Onboarding() {
                   <input
                     type="password"
                     required
-                    className="w-full bg-surface border border-border rounded-lg p-3 text-text focus:border-blue-500 focus:outline-none"
+                    className="w-full bg-surface border-[3px] border-text rounded-lg p-3 text-text focus:border-blue-500 focus:outline-none"
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   />
@@ -128,7 +135,7 @@ export default function Onboarding() {
 
                 <button
                   type="submit"
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-4 rounded-lg mt-6 transition-colors"
+                  className="w-full bg-blue-500 hover:bg-blue-600 text-text border-[3px] border-text shadow-[4px_4px_0_#111214] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_#111214] font-semibold py-3 px-4 rounded-lg mt-6 transition-colors"
                 >
                   Continue →
                 </button>
@@ -181,7 +188,7 @@ export default function Onboarding() {
                       <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${
                         isSelected ? 'border-blue-500 bg-blue-500' : 'border-text-muted'
                       }`}>
-                        {isSelected && <span className="text-white text-xs">✓</span>}
+                        {isSelected && <span className="text-text text-xs">✓</span>}
                       </div>
                     </button>
                   );
@@ -191,7 +198,7 @@ export default function Onboarding() {
               <button
                 onClick={handleSubmit}
                 disabled={loading}
-                className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-semibold py-3 px-4 rounded-lg mt-8 transition-colors"
+                className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-text font-semibold py-3 px-4 rounded-lg mt-8 transition-colors"
               >
                 {loading ? 'Creating Account...' : 'Finish & Enter Lab'}
               </button>

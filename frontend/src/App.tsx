@@ -4,7 +4,10 @@ import LandingPage from './pages/landingPage';
 import Login from './pages/Login';
 import Onboarding from './pages/Onboarding';
 import Lesson from './pages/Lesson';
-import Catalog from './pages/Catalog';
+import Dashboard from './pages/Dashboard';
+import Favorites from './pages/Favorites';
+import Community from './pages/Community';
+import Profile from './pages/Profile';
 import Play from './pages/Play';
 import { Toaster } from 'react-hot-toast';
 import './App.css';
@@ -30,10 +33,34 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/onboarding" element={<Onboarding />} />
           <Route
-            path="/catalog"
+            path="/dashboard"
             element={
               <ProtectedRoute>
-                <Catalog />
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/favorites"
+            element={
+              <ProtectedRoute>
+                <Favorites />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/community"
+            element={
+              <ProtectedRoute>
+                <Community />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
               </ProtectedRoute>
             }
           />

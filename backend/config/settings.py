@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
+    'drf_spectacular',
 
     # Local
     'tracks.apps.TracksConfig',
@@ -81,6 +82,8 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # --- CORS ---
 CORS_ALLOWED_ORIGINS = [
@@ -99,6 +102,25 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'QuestOps API',
+    'DESCRIPTION': (
+        'AI-powered immersive learning platform. Solve real cybersecurity incidents, '
+        'software bugs, and cloud outages in isolated simulation environments.'
+    ),
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'CONTACT': {'name': 'QuestOps Team'},
+    'LICENSE': {'name': 'MIT'},
+    'TAGS': [
+        {'name': 'auth', 'description': 'User registration, login, and profile management'},
+        {'name': 'tracks', 'description': 'Learning tracks and scenario catalog'},
+        {'name': 'simulation', 'description': 'Stage submission and skill progression'},
+        {'name': 'ai', 'description': 'AI-powered lesson chat and scenario generation'},
     ],
 }
 

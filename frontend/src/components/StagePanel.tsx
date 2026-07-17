@@ -38,16 +38,16 @@ export default function StagePanel({ stage, onClose, onSubmit, isSubmitting, hin
         animate={{ x: 0 }}
         exit={{ x: '100%' }}
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-        className="fixed top-0 right-0 w-full md:w-[500px] h-full bg-[#151414] border-l border-gray-800 shadow-2xl z-50 flex flex-col"
+        className="fixed top-0 right-0 w-full md:w-[500px] h-full bg-surface border-l border-border shadow-[8px_8px_0_#111214] border-[3px] border-text z-50 flex flex-col"
       >
-        <div className="p-6 border-b border-gray-800 flex justify-between items-center bg-[#1C1A1A]">
+        <div className="p-6 border-b border-border flex justify-between items-center bg-bg">
           <div className="flex items-center gap-3">
             <span className="bg-blue-600/20 text-blue-400 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
               {stage.label.replace('_', ' ')}
             </span>
-            <span className="text-gray-400 font-mono text-sm">Stage {stage.order}/4</span>
+            <span className="text-text-muted font-mono text-sm">Stage {stage.order}/4</span>
           </div>
-          <button onClick={onClose} className="text-gray-500 hover:text-white transition-colors">
+          <button onClick={onClose} className="text-text-muted hover:text-text transition-colors">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -56,20 +56,20 @@ export default function StagePanel({ stage, onClose, onSubmit, isSubmitting, hin
 
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
           <div className="space-y-4">
-            <h3 className="text-xl font-bold font-display text-white">{stage.prompt}</h3>
+            <h3 className="text-xl font-bold font-display text-text">{stage.prompt}</h3>
             
             {stage.artifact && (
-              <div className="bg-black border border-gray-800 rounded p-4 overflow-x-auto">
-                <pre className="text-sm font-mono text-gray-300 whitespace-pre-wrap">{stage.artifact}</pre>
+              <div className="bg-black border-[3px] border-text rounded p-4 overflow-x-auto">
+                <pre className="text-sm font-mono text-text whitespace-pre-wrap">{stage.artifact}</pre>
               </div>
             )}
           </div>
 
-          <div className="pt-4 border-t border-gray-800">
+          <div className="pt-4 border-t border-border">
             {stage.answer_type === 'mcq' && (
               <div className="space-y-3">
                 {stage.mcq_options.map((opt, i) => (
-                  <label key={i} className={`flex items-start p-4 rounded border cursor-pointer transition-colors ${mcqAnswer === opt ? 'bg-blue-600/10 border-blue-500' : 'bg-[#1C1A1A] border-gray-700 hover:border-gray-500'}`}>
+                  <label key={i} className={`flex items-start p-4 rounded border cursor-pointer transition-colors ${mcqAnswer === opt ? 'bg-blue-600/10 border-blue-500' : 'bg-bg border-border hover:border-gray-500'}`}>
                     <input
                       type="radio"
                       name="mcq"
@@ -78,13 +78,13 @@ export default function StagePanel({ stage, onClose, onSubmit, isSubmitting, hin
                       onChange={(e) => setMcqAnswer(e.target.value)}
                       className="mt-1 mr-3 text-blue-600 focus:ring-blue-500 bg-black border-gray-600"
                     />
-                    <span className="text-sm text-gray-200">{opt}</span>
+                    <span className="text-sm text-text">{opt}</span>
                   </label>
                 ))}
                 <button
                   onClick={() => handleSubmit()}
                   disabled={!mcqAnswer || isSubmitting}
-                  className="w-full mt-4 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-medium py-3 px-4 rounded transition-colors"
+                  className="w-full mt-4 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-text font-medium py-3 px-4 rounded transition-colors"
                 >
                   {isSubmitting ? 'Analyzing...' : 'Submit Assessment'}
                 </button>
@@ -97,13 +97,13 @@ export default function StagePanel({ stage, onClose, onSubmit, isSubmitting, hin
                   value={freeTextAnswer}
                   onChange={(e) => setFreeTextAnswer(e.target.value)}
                   placeholder="Explain your technical reasoning..."
-                  className="w-full h-32 bg-[#1C1A1A] border border-gray-700 rounded p-4 text-sm text-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none resize-none"
+                  className="w-full h-32 bg-bg border-[3px] border-text rounded p-4 text-sm text-text focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none resize-none"
                   spellCheck={false}
                 />
                 <button
                   onClick={() => handleSubmit()}
                   disabled={!freeTextAnswer.trim() || isSubmitting}
-                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white font-medium py-3 px-4 rounded transition-colors"
+                  className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-text font-medium py-3 px-4 rounded transition-colors"
                 >
                   {isSubmitting ? 'AI is Grading...' : 'Submit Explanation'}
                 </button>

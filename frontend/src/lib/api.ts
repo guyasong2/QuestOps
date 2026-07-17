@@ -103,6 +103,53 @@ export async function getMe(): Promise<any> {
   return res.json();
 }
 
+export async function updateProfile(data: {
+  fullname?: string;
+  username?: string;
+  email?: string;
+  bio?: string;
+}): Promise<any> {
+  const res = await fetch(`${API_BASE}/auth/profile/`, {
+    method: 'PATCH',
+    headers: getAuthHeaders(),
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(JSON.stringify(err));
+  }
+  return res.json();
+}
+
+export async function updateAvatar(file: File): Promise<any> {
+  const token = localStorage.getItem('token');
+  const formData = new FormData();
+  formData.append('avatar', file);
+  const res = await fetch(`${API_BASE}/auth/profile/avatar/`, {
+    method: 'POST',
+    headers: { 'Authorization': `Token ${token}` },
+    body: formData,
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error || 'Upload failed');
+  }
+  return res.json();
+}
+
+export async function changePassword(current_password: string, new_password: string): Promise<any> {
+  const res = await fetch(`${API_BASE}/auth/change-password/`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ current_password, new_password }),
+  });
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error || 'Password change failed');
+  }
+  return res.json();
+}
+
 export async function getTracks(): Promise<Track[]> {
   const res = await fetch(`${API_BASE}/tracks/`, { headers: getAuthHeaders() });
   if (!res.ok) throw new Error('Failed to load tracks');

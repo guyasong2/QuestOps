@@ -18,8 +18,8 @@ export default function ConsoleOutput({ logs }: { logs: LogEntry[] }) {
   }, [logs]);
 
   return (
-    <div className="bg-black border-t border-gray-800 h-48 flex flex-col font-mono text-xs">
-      <div className="bg-[#1C1A1A] px-4 py-1 text-gray-500 uppercase tracking-widest text-[10px] border-b border-gray-800 flex justify-between">
+    <div className="bg-black border-t border-border h-48 flex flex-col font-mono text-xs">
+      <div className="bg-bg px-4 py-1 text-text-muted uppercase tracking-widest text-[10px] border-b border-border flex justify-between">
         <span>Incident Log // Auto-recording</span>
         <span>STATUS: LIVE</span>
       </div>
@@ -30,7 +30,7 @@ export default function ConsoleOutput({ logs }: { logs: LogEntry[] }) {
       >
         <AnimatePresence initial={false}>
           {logs.map((log) => {
-            let colorClass = 'text-gray-400';
+            let colorClass = 'text-text-muted';
             if (log.type === 'error') colorClass = 'text-red-400';
             if (log.type === 'success') colorClass = 'text-green-400';
             if (log.type === 'system') colorClass = 'text-blue-400';

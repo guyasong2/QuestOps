@@ -1,5 +1,7 @@
 import { useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import NavBar from "../components/navBar";
+import { useAuth } from '../contexts/AuthContext';
 
 const capabilities = ["Cybersecurity", "Software engineering", "Cloud infrastructure"];
 const workflowSteps = [
@@ -21,6 +23,7 @@ function CapabilityIcon({ label }: { label: string }) {
 
 export default function Hero() {
   const navigate = useNavigate();
+  const { token } = useAuth();
 
   return (
     <main className="landing-page">
@@ -28,34 +31,64 @@ export default function Hero() {
 
       <section className="hero-section" aria-labelledby="hero-title">
         <div className="hero-content">
-          <h1 className="hero-title" id="hero-title">
+          <motion.h1 
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, type: 'spring', bounce: 0.4 }}
+            className="hero-title" id="hero-title"
+          >
             Real breaches,<br />
             <span className="accent">real bugs,</span> real<br />
             skills
-          </h1>
+          </motion.h1>
 
-          <p className="hero-description">
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="hero-description"
+          >
             An AI-powered escape room where challenges are real incidents:<br />
             cybersecurity, software engineering, cloud.
-          </p>
+          </motion.p>
 
-          <button
+          <motion.button
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.4, delay: 0.4 }}
             className="session-button focusable"
             type="button"
-            onClick={() => navigate('/onboarding')}
+            onClick={() => token ? navigate('/dashboard') : navigate('/onboarding')}
           >
-            Initialize session
-          </button>
+            {token ? 'Dashboard' : 'Initialize session'}
+          </motion.button>
         </div>
 
-        <div className="capabilities" aria-label="QuestOps challenge areas">
+        <motion.div 
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: { staggerChildren: 0.2, delayChildren: 0.5 }
+            }
+          }}
+          className="capabilities" aria-label="QuestOps challenge areas"
+        >
           {capabilities.map((label) => (
-            <div className="capability" key={label}>
+            <motion.div 
+              variants={{
+                hidden: { opacity: 0, y: 20 },
+                visible: { opacity: 1, y: 0 }
+              }}
+              className="capability" key={label}
+            >
               <span className="capability-icon"><CapabilityIcon label={label} /></span>
               <span>{label}</span>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
 
       <section className="how-it-works" aria-labelledby="how-it-works-title">

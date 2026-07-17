@@ -45,7 +45,7 @@ function Timer({ totalSeconds, isActive, onExpire }: { totalSeconds: number; isA
           transition={{ duration: 0.5 }}
         />
       </div>
-      <div className={`font-mono font-bold tabular-nums ${urgent ? 'text-red-400 animate-pulse' : 'text-white'}`}>
+      <div className={`font-mono font-bold tabular-nums ${urgent ? 'text-red-400 animate-pulse' : 'text-text'}`}>
         <HiOutlineClock className="w-4 h-4 inline mr-1 -mt-0.5" />
         {mm}:{ss}
       </div>
@@ -55,10 +55,10 @@ function Timer({ totalSeconds, isActive, onExpire }: { totalSeconds: number; isA
 
 // ─── Stage Step Pill ───────────────────────────────────────────────────────────
 const STAGE_META: Record<string, { icon: React.ReactNode; color: string }> = {
-  detect:     { icon: <HiOutlineShieldCheck className="w-4 h-4" />, color: 'text-blue-400'   },
-  assess:     { icon: <HiOutlineLightningBolt className="w-4 h-4" />, color: 'text-yellow-400' },
+  detect: { icon: <HiOutlineShieldCheck className="w-4 h-4" />, color: 'text-blue-400' },
+  assess: { icon: <HiOutlineLightningBolt className="w-4 h-4" />, color: 'text-yellow-400' },
   root_cause: { icon: <HiOutlineInformationCircle className="w-4 h-4" />, color: 'text-purple-400' },
-  fix:        { icon: <HiOutlinePlay className="w-4 h-4" />, color: 'text-green-400'   },
+  fix: { icon: <HiOutlinePlay className="w-4 h-4" />, color: 'text-green-400' },
 };
 
 // ─── MCQ Component ─────────────────────────────────────────────────────────────
@@ -69,11 +69,10 @@ function MCQStage({ options, onSubmit, disabled }: { options: string[]; onSubmit
       {options.map((opt, i) => (
         <label
           key={i}
-          className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-all ${
-            selected === opt
+          className={`flex items-start gap-3 p-4 rounded-xl border cursor-pointer transition-all ${selected === opt
               ? 'bg-blue-600/10 border-blue-500 ring-1 ring-blue-500'
-              : 'bg-[#1a1a2e]/50 border-gray-700 hover:border-gray-500'
-          }`}
+              : 'bg-surface border-border hover:border-gray-500'
+            }`}
         >
           <input
             type="radio"
@@ -83,13 +82,13 @@ function MCQStage({ options, onSubmit, disabled }: { options: string[]; onSubmit
             onChange={() => setSelected(opt)}
             className="mt-0.5 text-blue-500 focus:ring-blue-500 bg-transparent border-gray-500 shrink-0"
           />
-          <span className="text-sm text-gray-200 leading-relaxed">{opt}</span>
+          <span className="text-sm text-text leading-relaxed">{opt}</span>
         </label>
       ))}
       <button
         onClick={() => onSubmit(selected)}
         disabled={!selected || disabled}
-        className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-white font-bold py-3 rounded-xl mt-4 transition-colors shadow-lg"
+        className="w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-40 text-text font-bold py-3 rounded-xl mt-4 transition-colors shadow-[4px_4px_0_#111214] border-[3px] border-text"
       >
         <HiOutlineCheckCircle className="w-5 h-5" />
         {disabled ? 'Analyzing...' : 'Submit Answer'}
@@ -108,13 +107,13 @@ function FreeTextStage({ onSubmit, disabled }: { onSubmit: (a: string) => void; 
         onChange={(e) => setVal(e.target.value)}
         placeholder="Explain your technical reasoning in detail..."
         rows={6}
-        className="w-full bg-[#1a1a2e]/50 border border-gray-700 rounded-xl p-4 text-sm text-gray-200 placeholder-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none resize-none"
+        className="w-full bg-surface border-[3px] border-text rounded-xl p-4 text-sm text-text placeholder-gray-600 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none resize-none"
         spellCheck={false}
       />
       <button
         onClick={() => onSubmit(val)}
         disabled={!val.trim() || disabled}
-        className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-white font-bold py-3 rounded-xl transition-colors shadow-lg"
+        className="w-full flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 disabled:opacity-40 text-text font-bold py-3 rounded-xl transition-colors shadow-[4px_4px_0_#111214] border-[3px] border-text"
       >
         <HiOutlineCheckCircle className="w-5 h-5" />
         {disabled ? 'AI Grading...' : 'Submit Explanation'}
@@ -165,21 +164,19 @@ function SceneNode({
       whileTap={status === 'active' ? { scale: 0.95 } : {}}
     >
       <motion.div
-        className={`w-12 h-12 rounded-full border-2 flex items-center justify-center shadow-xl transition-all ${
-          status === 'done'    ? 'border-green-500 bg-green-500/20 text-green-400' :
-          status === 'active' ? 'border-blue-400 bg-blue-500/20 text-blue-300 cursor-pointer' :
-                                'border-gray-700 bg-gray-900/50 text-gray-600 cursor-not-allowed'
-        }`}
+        className={`w-12 h-12 rounded-full border-2 flex items-center justify-center shadow-[6px_6px_0_#111214] border-[3px] border-text transition-all ${status === 'done' ? 'border-green-500 bg-green-500/20 text-green-400' :
+            status === 'active' ? 'border-blue-400 bg-blue-500/20 text-blue-300 cursor-pointer' :
+              'border-border bg-gray-900/50 text-gray-600 cursor-not-allowed'
+          }`}
         animate={status === 'active' ? { boxShadow: ['0 0 0px rgba(59,130,246,0)', '0 0 20px rgba(59,130,246,0.5)', '0 0 0px rgba(59,130,246,0)'] } : {}}
         transition={{ duration: 2, repeat: Infinity }}
       >
         {status === 'done' ? <HiOutlineCheckCircle className="w-5 h-5" /> : meta.icon}
       </motion.div>
-      <span className={`text-[10px] font-bold uppercase tracking-widest whitespace-nowrap px-2 py-0.5 rounded ${
-        status === 'active' ? 'text-blue-300 bg-blue-900/40' :
-        status === 'done'   ? 'text-green-400 bg-green-900/30' :
-                              'text-gray-600'
-      }`}>
+      <span className={`text-[10px] font-bold uppercase tracking-widest whitespace-nowrap px-2 py-0.5 rounded ${status === 'active' ? 'text-blue-300 bg-blue-900/40' :
+          status === 'done' ? 'text-green-400 bg-green-900/30' :
+            'text-gray-600'
+        }`}>
         {stage.label.replace('_', ' ')}
       </span>
 
@@ -217,7 +214,7 @@ export default function Play() {
         toast('📡 Simulation loaded — click the glowing node to begin', { icon: '🧪' });
       } catch {
         toast.error('Failed to load scenario');
-        navigate('/catalog');
+        navigate('/dashboard');
       } finally {
         setLoading(false);
       }
@@ -246,7 +243,7 @@ export default function Play() {
           setIsActive(false);
           setCompleted(true);
           toast.success('🎉 Incident contained! Simulation complete!', { duration: 5000 });
-          setTimeout(() => navigate('/catalog'), 4000);
+          setTimeout(() => navigate('/dashboard'), 4000);
         }
       } else {
         toast.error('Incorrect — review your approach', { icon: '✗' });
@@ -264,12 +261,12 @@ export default function Play() {
     setIsActive(false);
     setActiveStage(null);
     toast.error('⏰ TIME UP — Incident breached containment!', { duration: 5000 });
-    setTimeout(() => navigate('/catalog'), 3500);
+    setTimeout(() => navigate('/dashboard'), 3500);
   };
 
   if (loading || !scenario) {
     return (
-      <div className="min-h-screen bg-[#050510] flex items-center justify-center">
+      <div className="min-h-screen bg-bg flex items-center justify-center">
         <div className="text-center">
           <motion.div
             animate={{ rotate: 360 }}
@@ -293,13 +290,13 @@ export default function Play() {
   const rightWidth = isSandbox ? 'w-[55%]' : 'w-[420px]';
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden bg-[#050510] text-white">
+    <div className="h-screen flex flex-col overflow-hidden bg-bg text-text">
       {/* HUD Header */}
-      <header className="h-14 bg-[#0a0a1a] border-b border-gray-800 flex items-center justify-between px-6 shrink-0 z-20">
+      <header className="h-14 bg-surface border-b border-border flex items-center justify-between px-6 shrink-0 z-20">
         <div className="flex items-center gap-4">
           <button
-            onClick={() => navigate('/catalog')}
-            className="text-gray-500 hover:text-white transition-colors flex items-center gap-1.5 text-sm"
+            onClick={() => navigate('/dashboard')}
+            className="text-text-muted hover:text-text transition-colors flex items-center gap-1.5 text-sm"
           >
             <HiOutlineArrowLeft className="w-4 h-4" />
             Abort
@@ -311,21 +308,31 @@ export default function Play() {
             ) : (
               <HiOutlineCode className="w-5 h-5 text-blue-400" />
             )}
-            <h1 className="font-display font-bold text-white text-sm truncate max-w-xs">{scenario.title}</h1>
+            <h1 className="font-display font-bold text-text text-sm truncate max-w-xs">{scenario.title}</h1>
           </div>
         </div>
 
         <div className="flex items-center gap-6">
+          {activeStage && (
+            <div className="relative group flex items-center gap-2 text-sm text-text-muted cursor-help">
+              <span>💡</span> <span className="hidden md:inline font-bold hover:text-text transition-colors">Pssssst! Need a hint?</span>
+
+              {/* Tooltip Content */}
+              <div className="absolute top-full mt-2 right-0 w-64 p-3 bg-surface border-[3px] border-text shadow-[4px_4px_0_#111214] text-text text-xs rounded opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 pointer-events-none">
+                <strong>Hint:</strong> {activeStage.hint || 'Analyze the initial logs or use basic assessment commands first.'}
+              </div>
+            </div>
+          )}
+
           {/* Stage progress pills */}
           <div className="hidden md:flex items-center gap-2">
             {scenario.stages.map((s, i) => (
               <div
                 key={s.id}
-                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border transition-all ${
-                  i < currentStageIdx ? 'bg-green-900/40 border-green-700 text-green-400' :
-                  i === currentStageIdx ? 'bg-blue-900/40 border-blue-600 text-blue-300' :
-                  'bg-transparent border-gray-800 text-gray-600'
-                }`}
+                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold border transition-all ${i < currentStageIdx ? 'bg-green-900/40 border-green-700 text-green-400' :
+                    i === currentStageIdx ? 'bg-blue-900/40 border-blue-600 text-blue-300' :
+                      'bg-transparent border-border text-gray-600'
+                  }`}
               >
                 {STAGE_META[s.label]?.icon}
                 {s.label.replace('_', ' ')}
@@ -392,7 +399,7 @@ export default function Play() {
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="bg-black/70 backdrop-blur border border-gray-700 rounded-xl p-5 text-sm text-gray-300 font-mono"
+                className="bg-bg/90 backdrop-blur border-[3px] border-text rounded-xl p-5 text-sm text-text font-mono"
               >
                 {scenario.narrative}
                 <br /><br />
@@ -408,12 +415,12 @@ export default function Play() {
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur"
+              className="absolute inset-0 flex items-center justify-center bg-bg/80 backdrop-blur"
             >
               <div className="text-center">
                 <HiOutlineCheckCircle className="w-20 h-20 text-green-400 mx-auto mb-4" />
                 <h2 className="text-3xl font-display font-black text-green-400 mb-2">INCIDENT CONTAINED</h2>
-                <p className="text-gray-400">Returning to catalog...</p>
+                <p className="text-text-muted">Returning to dashboard...</p>
               </div>
             </motion.div>
           )}
@@ -427,10 +434,10 @@ export default function Play() {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 28, stiffness: 240 }}
-              className={`${rightWidth} shrink-0 flex flex-col bg-[#0d0d1a] border-l border-gray-800 shadow-2xl z-10 h-full overflow-hidden`}
+              className={`${rightWidth} shrink-0 flex flex-col bg-bg border-l border-border shadow-[8px_8px_0_#111214] border-[3px] border-text z-10 h-full overflow-hidden`}
             >
               {/* Panel header */}
-              <div className="px-5 py-4 border-b border-gray-800 bg-[#0a0a14] flex items-center justify-between shrink-0">
+              <div className="px-5 py-4 border-b border-border bg-surface flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-3">
                   <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold ${STAGE_META[activeStage.label]?.color} border-current bg-current/10`}>
                     {STAGE_META[activeStage.label]?.icon}
@@ -450,7 +457,7 @@ export default function Play() {
                 </div>
                 <button
                   onClick={() => { setActiveStage(null); setHint(''); }}
-                  className="text-gray-600 hover:text-white transition-colors"
+                  className="text-gray-600 hover:text-text transition-colors"
                 >
                   <HiOutlineXCircle className="w-5 h-5" />
                 </button>
@@ -460,11 +467,11 @@ export default function Play() {
               <div className="flex-1 overflow-y-auto flex flex-col min-h-0">
                 {/* Prompt + artifact (only non-sandbox) */}
                 {activeStage.answer_type !== 'code_editor' && activeStage.answer_type !== 'terminal' && (
-                  <div className="p-5 space-y-4 border-b border-gray-800">
-                    <h3 className="text-base font-bold text-white leading-snug">{activeStage.prompt}</h3>
+                  <div className="p-5 space-y-4 border-b border-border">
+                    <h3 className="text-base font-bold text-text leading-snug">{activeStage.prompt}</h3>
                     {activeStage.artifact && (
-                      <div className="bg-black border border-gray-800 rounded-lg p-4 overflow-x-auto max-h-52">
-                        <pre className="text-xs text-gray-300 font-mono whitespace-pre-wrap">{activeStage.artifact}</pre>
+                      <div className="bg-black border-[3px] border-text rounded-lg p-4 overflow-x-auto max-h-52">
+                        <pre className="text-xs text-white font-mono whitespace-pre-wrap">{activeStage.artifact}</pre>
                       </div>
                     )}
                   </div>
@@ -472,15 +479,15 @@ export default function Play() {
 
                 {/* Sandbox types — full-height */}
                 {(activeStage.answer_type === 'code_editor' || activeStage.answer_type === 'terminal') && (
-                  <div className="p-4 border-b border-gray-800 space-y-2">
-                    <h3 className="text-sm font-bold text-white leading-snug">{activeStage.prompt}</h3>
+                  <div className="p-4 border-b border-border space-y-2">
+                    <h3 className="text-sm font-bold text-text leading-snug">{activeStage.prompt}</h3>
                     {activeStage.artifact && (
                       <details className="group">
                         <summary className="text-xs text-blue-400 cursor-pointer hover:text-blue-300 flex items-center gap-1">
                           <HiOutlineInformationCircle className="w-3.5 h-3.5" /> View context / environment
                         </summary>
-                        <div className="mt-2 bg-black border border-gray-800 rounded p-3 overflow-x-auto max-h-40">
-                          <pre className="text-xs text-gray-400 font-mono whitespace-pre-wrap">{activeStage.artifact}</pre>
+                        <div className="mt-2 bg-black border-[3px] border-text rounded p-3 overflow-x-auto max-h-40">
+                          <pre className="text-xs text-text-muted font-mono whitespace-pre-wrap">{activeStage.artifact}</pre>
                         </div>
                       </details>
                     )}

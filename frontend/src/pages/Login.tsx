@@ -22,7 +22,7 @@ export default function Login() {
       localStorage.setItem('token', res.token);
       const user = await getMe();
       loginUser(res.token, user);
-      navigate('/catalog');
+      navigate('/dashboard');
     } catch (err: any) {
       setError(err.message || 'Login failed');
     } finally {
@@ -35,7 +35,7 @@ export default function Login() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="max-w-md w-full bg-surface border border-border rounded-xl p-8 shadow-2xl"
+        className="max-w-md w-full bg-surface border-[3px] border-text rounded-xl p-8 shadow-[8px_8px_0_#111214] border-[3px] border-text"
       >
         <h2 className="text-2xl font-bold text-text mb-6">Welcome Back</h2>
         
@@ -51,7 +51,7 @@ export default function Login() {
             <input
               type="text"
               required
-              className="w-full bg-bg border border-border rounded p-2 text-text focus:border-blue-500 focus:outline-none"
+              className="w-full bg-bg border-[3px] border-text rounded p-2 text-text focus:border-blue-500 focus:outline-none"
               value={formData.username}
               onChange={(e) => setFormData({ ...formData, username: e.target.value })}
             />
@@ -61,7 +61,7 @@ export default function Login() {
             <input
               type="password"
               required
-              className="w-full bg-bg border border-border rounded p-2 text-text focus:border-blue-500 focus:outline-none"
+              className="w-full bg-bg border-[3px] border-text rounded p-2 text-text focus:border-blue-500 focus:outline-none"
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
             />
@@ -70,7 +70,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition-colors disabled:opacity-50"
+            className="w-full bg-blue-500 hover:bg-blue-600 text-text border-[3px] border-text shadow-[4px_4px_0_#111214] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0_#111214] font-semibold py-2 px-4 rounded transition-colors disabled:opacity-50"
           >
             {loading ? 'Logging in...' : 'Login'}
           </button>

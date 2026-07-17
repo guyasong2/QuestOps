@@ -2,15 +2,27 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #F3F4F6;
-  --color-surface: #FFFFFF;
-  --color-border: #E5E7EB;
-  --color-text: #111827;
-  --color-text-muted: #6B7280;
+  --color-bg: #ffffff;
+  --color-surface: #ffffff;
+  --color-border: #111214;
+  --color-text: #111214;
+  --color-text-muted: #4b5563;
   
   --color-accent-cyber: #ef4444;
-  --color-accent-software: #3b82f6;
+  --color-accent-software: #b7ed00;
   --color-accent-cloud: #14b8a6;
+
+  /* Override Tailwind blues to use our brand green so we don't have to rewrite every button class */
+  --color-blue-50: #f7fce5;
+  --color-blue-100: #eef9cc;
+  --color-blue-200: #e0f499;
+  --color-blue-300: #d1ef66;
+  --color-blue-400: #c3ea33;
+  --color-blue-500: #b7ed00; /* main brand green */
+  --color-blue-600: #a5d500; /* hover green */
+  --color-blue-700: #8bb400;
+  --color-blue-800: #6e8e00;
+  --color-blue-900: #577000;
 
   --font-display: "Chakra Petch", sans-serif;
   --font-body: "Inter", sans-serif;
@@ -39,6 +51,11 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-mono);
 }
 
+/* Base interactive elements for neo-brutalist feel */
+button {
+  cursor: pointer;
+}
+
 /* Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
@@ -47,13 +64,14 @@ h1, h2, h3, h4, h5, h6 {
 
 ::-webkit-scrollbar-track {
   background: var(--color-bg);
+  border-left: 2px solid var(--color-border);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-border);
-  border-radius: 4px;
+  background: var(--color-text);
+  border: 1px solid var(--color-bg);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #9ca3af;
+  background: var(--color-text-muted);
 }
