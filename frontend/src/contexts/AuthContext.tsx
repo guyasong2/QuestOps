@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { getMe } from '../lib/api';
+import toast from 'react-hot-toast';
 
 interface User {
   username: string;
@@ -24,6 +25,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const resetTimeout = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    if (token) {
+      // 30 minutes timeout
+      timeoutRef.current = setTimeout(() => {
+        logoutUser();
+        toast('Session expired due to inactivity.', { icon: '⏳' });
+      }, 30 * 60 * 1000);
+    }
+  };
+
+  useEffect(() => {
+    const events = ['mousemove', 'keydown', 'scroll', 'click'];
+    const handleActivity = () => resetTimeout();
+
+    if (token) {
+      events.forEach(e => window.addEventListener(e, handleActivity));
+      resetTimeout(); // Initialize
+    }
+
+    return () => {
+      events.forEach(e => window.removeEventListener(e, handleActivity));
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    };
+  }, [token]);
 
   useEffect(() => {
     if (token) {
