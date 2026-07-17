@@ -94,7 +94,7 @@ export default function Hero() {
 
       <footer className="site-footer">
         <div>
-          <strong>QuestOps</strong>
+          <img className="footer-logo" src="/QuestOps_logo.png" alt="QuestOps" />
           <p>© 2026 QuestOps Inc. Terminal access only.</p>
         </div>
         <nav aria-label="Footer navigation">
