@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Home from './pages/Home';
@@ -59,3 +60,11 @@ function App() {
 }
 
 export default App;
+=======
+import LandingPage from "./pages/landingPage";
+import "./App.css";
+
+export default function App() {
+  return <LandingPage />;
+}
+>>>>>>> fb17e71b9c3e024808eb284d90e28ffdd004a688
