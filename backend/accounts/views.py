@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from rest_framework import serializers
 from PIL import Image
+import io
 import logging
 
 from .models import UserProfile
@@ -186,14 +187,16 @@ class UpdateAvatarView(APIView):
         if avatar_file.size > 5 * 1024 * 1024:  # 5MB
             return Response({'error': 'Image must be under 5MB.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Verify actual image bytes with Pillow — MIME header from client is not trusted
+        # Read raw bytes once — verify() is destructive to the object it opens,
+        # so we verify on a BytesIO copy and leave the original stream intact.
+        raw_bytes = avatar_file.read()
         try:
-            img = Image.open(avatar_file)
+            img = Image.open(io.BytesIO(raw_bytes))
             img.verify()  # raises if not a valid image
         except Exception:
             return Response({'error': 'File must be a valid image.'}, status=status.HTTP_400_BAD_REQUEST)
         finally:
-            avatar_file.seek(0)  # reset stream so Django can save it
+            avatar_file.seek(0)  # reset so Django storage can read it for upload
 
         profile, _ = UserProfile.objects.get_or_create(user=request.user)
         profile.avatar = avatar_file

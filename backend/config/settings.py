@@ -3,7 +3,8 @@ Django settings for Escape the Lab — Prometheus Hackathon 2026.
 """
 
 from pathlib import Path
-from decouple import config
+from decouple import config, Csv
+import dj_database_url
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -64,18 +65,18 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-# If DEBUG is False (prod), point the SQLite DB to the mounted /app/data volume.
-if DEBUG:
-    db_path = BASE_DIR / 'db.sqlite3'
+# Database — use DATABASE_URL in production (Postgres), SQLite locally.
+_database_url = config('DATABASE_URL', default='')
+if _database_url:
+    DATABASES = {'default': dj_database_url.parse(_database_url, conn_max_age=600)}
 else:
-    db_path = Path('/app/data/db.sqlite3')
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': db_path,
+    db_path = BASE_DIR / 'db.sqlite3' if DEBUG else Path('/app/data/db.sqlite3')
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': db_path,
+        }
     }
-}
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -108,15 +109,22 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media' if DEBUG else Path('/app/media')
 
 # AWS S3 Settings (for media uploads)
-AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID', default='')
-AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY', default='')
+# Credentials are optional — if omitted, boto3 uses the EC2 IAM instance role automatically.
+# Only set these if you are NOT using an IAM role (e.g. local dev without a role).
+_aws_key    = config('AWS_ACCESS_KEY_ID', default='')
+_aws_secret = config('AWS_SECRET_ACCESS_KEY', default='')
+if _aws_key:
+    AWS_ACCESS_KEY_ID = _aws_key
+if _aws_secret:
+    AWS_SECRET_ACCESS_KEY = _aws_secret
+
 AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME', default='')
-AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME', default='us-east-1')
-AWS_LOCATION = config('AWS_LOCATION', default='')
-AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
-AWS_S3_FILE_OVERWRITE = False
-AWS_DEFAULT_ACL = 'public-read'
-AWS_QUERYSTRING_AUTH = False  # Avoid signed URLs if bucket is public
+AWS_S3_REGION_NAME      = config('AWS_S3_REGION_NAME', default='us-east-1')
+AWS_LOCATION            = config('AWS_LOCATION', default='avatars')
+AWS_S3_CUSTOM_DOMAIN    = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+AWS_S3_FILE_OVERWRITE   = False
+AWS_DEFAULT_ACL         = 'public-read'
+AWS_QUERYSTRING_AUTH    = False  # Avoid signed URLs — bucket is public-read
 
 if AWS_STORAGE_BUCKET_NAME:
     # Use S3 for user-uploaded media
@@ -126,10 +134,13 @@ if AWS_STORAGE_BUCKET_NAME:
     MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/{AWS_LOCATION}/' if AWS_LOCATION else f'https://{AWS_S3_CUSTOM_DOMAIN}/'
 
 # --- CORS ---
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-]
+# In .env set: CORS_ALLOWED_ORIGINS=https://yourdomain.com,http://localhost:5173
+_cors_origins = config(
+    'CORS_ALLOWED_ORIGINS',
+    default='http://localhost:5173,http://127.0.0.1:5173',
+    cast=Csv()
+)
+CORS_ALLOWED_ORIGINS = list(_cors_origins)
 # Never allow all origins — always use the explicit whitelist above.
 CORS_ALLOW_ALL_ORIGINS = False
 

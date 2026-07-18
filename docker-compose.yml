@@ -1,24 +1,48 @@
 version: '3.8'
-
 services:
+  db:
+    image: postgres:16
+    container_name: questops-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: questops
+      POSTGRES_USER: guyasong
+      POSTGRES_PASSWORD: Panchakoboy11@
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
   backend:
-    build: 
+    build:
       context: ./backend
       dockerfile: Dockerfile
     container_name: questops-backend
+    depends_on:
+      - db
     ports:
-      - "8000:8000"
+      - "127.0.0.1:8000:8000"
     volumes:
       - db_data:/app/data
     env_file:
       - ./backend/.env
     environment:
-      # Override the .env value for Docker networking
       - OLLAMA_BASE_URL=http://host.docker.internal:11434
     restart: unless-stopped
-    # Use extra_hosts so the container can reach Ollama running on the host
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: questops-frontend
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+    restart: unless-stopped
+
 volumes:
   db_data:
+  postgres_data:
