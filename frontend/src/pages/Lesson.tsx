@@ -14,7 +14,7 @@ import {
   HiOutlineLightningBolt,
   HiOutlineChat,
 } from 'react-icons/hi';
-import { getScenario, lessonChat } from '../lib/api';
+import { getScenario, lessonChat, getLessonChatHistory } from '../lib/api';
 import type { ScenarioDetail } from '../lib/api';
 
 interface ChatMessage {
@@ -56,18 +56,26 @@ export default function Lesson() {
   useEffect(() => {
     async function load() {
       try {
-        const data = await getScenario(scenarioId!);
-        setScenario(data);
-        // Greet user with an initial AI message
-        setMessages([
-          {
-            id: 'init',
-            role: 'assistant',
-            content: `👋 Welcome to the **${data.title}** briefing!\n\nI'm your AI tutor. I've studied this incident in depth and I'm here to help you understand it before you jump into the simulation.\n\nFeel free to ask me anything about the concepts covered — whether it's about the technology, attack vectors, diagnostic steps, or best practices. What would you like to explore first?`,
-          },
+        const [data, history] = await Promise.all([
+          getScenario(scenarioId!),
+          getLessonChatHistory(parseInt(scenarioId!))
         ]);
+        setScenario(data);
+        
+        if (history.length > 0) {
+          setMessages(history);
+        } else {
+          // Greet user with an initial AI message if no history
+          setMessages([
+            {
+              id: 'init',
+              role: 'assistant',
+              content: `👋 Welcome to the **${data.title}** briefing!\n\nI'm your AI tutor. I've studied this incident in depth and I'm here to help you understand it before you jump into the simulation.\n\nFeel free to ask me anything about the concepts covered — whether it's about the technology, attack vectors, diagnostic steps, or best practices. What would you like to explore first?`,
+            },
+          ]);
+        }
       } catch {
-        toast.error('Failed to load scenario briefing.');
+        toast.error('Failed to load scenario briefing or chat history.');
         navigate('/dashboard');
       } finally {
         setLoadingScenario(false);
@@ -90,12 +98,8 @@ export default function Lesson() {
     setInput('');
     setIsTyping(true);
 
-    const history = messages
-      .filter((m) => m.id !== 'init')
-      .map(({ role, content }) => ({ role, content }));
-
     try {
-      const { reply } = await lessonChat(scenario.id, trimmed, history);
+      const { reply } = await lessonChat(scenario.id, trimmed);
       setMessages((prev) => [
         ...prev,
         { id: Date.now().toString(), role: 'assistant', content: reply },

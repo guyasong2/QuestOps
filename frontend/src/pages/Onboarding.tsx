@@ -11,6 +11,15 @@ const CAREER_PATHS = [
   { id: 'cloud', label: 'Cloud Infrastructure', icon: '☁️' },
 ];
 
+/** Returns an error message if the password is too weak, otherwise null. */
+function validatePassword(password: string): string | null {
+  if (password.length < 8) return 'Password must be at least 8 characters.';
+  if (!/[a-zA-Z]/.test(password)) return 'Password must contain at least one letter.';
+  if (!/[0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>/?]/.test(password))
+    return 'Password must contain at least one number or special character.';
+  return null;
+}
+
 export default function Onboarding() {
   const navigate = useNavigate();
   const { loginUser } = useAuth();
@@ -18,6 +27,7 @@ export default function Onboarding() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   
   const [formData, setFormData] = useState({
     fullname: '',
@@ -29,6 +39,12 @@ export default function Onboarding() {
 
   const handleNextStep = (e: React.FormEvent) => {
     e.preventDefault();
+    const pwError = validatePassword(formData.password);
+    if (pwError) {
+      setPasswordError(pwError);
+      return;
+    }
+    setPasswordError('');
     setStep(2);
   };
 
@@ -59,7 +75,19 @@ export default function Onboarding() {
       loginUser(res.token, user);
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err.message || 'Registration failed');
+      // Surface structured DRF validation errors if present
+      try {
+        const body = JSON.parse(err.message);
+        const messages = Object.entries(body)
+          .map(([field, msgs]) => {
+            const list = Array.isArray(msgs) ? msgs : [msgs];
+            return `${field}: ${list.join(', ')}`;
+          })
+          .join(' | ');
+        setError(messages || 'Registration failed. Please check your details.');
+      } catch {
+        setError(err.message || 'Registration failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -127,10 +155,22 @@ export default function Onboarding() {
                   <input
                     type="password"
                     required
-                    className="w-full bg-surface border-[3px] border-text rounded-lg p-3 text-text focus:border-blue-500 focus:outline-none"
+                    minLength={8}
+                    className={`w-full bg-surface border-[3px] rounded-lg p-3 text-text focus:outline-none ${
+                      passwordError ? 'border-red-500 focus:border-red-500' : 'border-text focus:border-blue-500'
+                    }`}
                     value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                    onChange={(e) => {
+                      setFormData({ ...formData, password: e.target.value });
+                      if (passwordError) setPasswordError('');
+                    }}
                   />
+                  {passwordError && (
+                    <p className="mt-1 text-xs text-red-400">{passwordError}</p>
+                  )}
+                  <p className="mt-1 text-xs text-text-muted">
+                    Min. 8 characters, including a letter and a number or symbol.
+                  </p>
                 </div>
 
                 <button

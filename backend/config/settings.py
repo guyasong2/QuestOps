@@ -7,9 +7,10 @@ from decouple import config
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = config('SECRET_KEY', default='django-insecure-fallback-key-change-in-prod')
-DEBUG = config('DEBUG', default=True, cast=bool)
-ALLOWED_HOSTS = ['*']
+# SECRET_KEY must be set in .env — no insecure fallback allowed.
+SECRET_KEY = config('SECRET_KEY')
+DEBUG = config('DEBUG', default=False, cast=bool)
+ALLOWED_HOSTS = ['localhost', '127.0.0.1'] if DEBUG else config('ALLOWED_HOSTS', default='').split(',')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -90,7 +91,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
 ]
-CORS_ALLOW_ALL_ORIGINS = DEBUG  # convenient for hackathon dev
+# Never allow all origins — always use the explicit whitelist above.
+CORS_ALLOW_ALL_ORIGINS = False
 
 # --- Django REST Framework ---
 REST_FRAMEWORK = {
@@ -101,9 +103,18 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+        'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    # Rate limiting: unauthenticated 20/min, authenticated 60/min
+    'DEFAULT_THROTTLE_CLASSES': [
+        'rest_framework.throttling.AnonRateThrottle',
+        'rest_framework.throttling.UserRateThrottle',
+    ],
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '20/min',
+        'user': '60/min',
+    },
 }
 
 SPECTACULAR_SETTINGS = {
@@ -114,6 +125,8 @@ SPECTACULAR_SETTINGS = {
     ),
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
+    # Restrict schema download and Swagger/ReDoc UI to admin users only.
+    'SERVE_PERMISSIONS': ['rest_framework.permissions.IsAdminUser'],
     'CONTACT': {'name': 'QuestOps Team'},
     'LICENSE': {'name': 'MIT'},
     'TAGS': [
@@ -122,6 +135,45 @@ SPECTACULAR_SETTINGS = {
         {'name': 'simulation', 'description': 'Stage submission and skill progression'},
         {'name': 'ai', 'description': 'AI-powered lesson chat and scenario generation'},
     ],
+}
+
+# --- Logging ---
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'root': {
+        'handlers': ['console'],
+        'level': 'WARNING',
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'WARNING',
+            'propagate': False,
+        },
+        'tracks': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'accounts': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+    },
 }
 
 # --- AI backends ---

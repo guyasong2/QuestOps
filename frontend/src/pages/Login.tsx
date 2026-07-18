@@ -24,7 +24,14 @@ export default function Login() {
       loginUser(res.token, user);
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err.message || 'Login failed');
+      // Parse structured DRF error responses (e.g. { "error": "Invalid credentials" })
+      try {
+        const body = JSON.parse(err.message);
+        const msg = body?.error || body?.detail || Object.values(body).flat().join(' | ');
+        setError(msg || 'Login failed. Please check your credentials.');
+      } catch {
+        setError('Login failed. Please check your credentials.');
+      }
     } finally {
       setLoading(false);
     }

@@ -81,7 +81,10 @@ export async function login(data: any): Promise<any> {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error('Login failed');
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(JSON.stringify(body));
+  }
   return res.json();
 }
 
@@ -91,7 +94,10 @@ export async function register(data: any): Promise<any> {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
   });
-  if (!res.ok) throw new Error('Registration failed');
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(JSON.stringify(body));
+  }
   return res.json();
 }
 
@@ -178,15 +184,36 @@ export async function getSkills(): Promise<StudentSkill[]> {
   return res.json();
 }
 
+export async function getLessonChatHistory(scenarioId: number): Promise<{ id: string; role: 'user' | 'assistant'; content: string }[]> {
+  const res = await fetch(`${API_BASE}/scenarios/${scenarioId}/chat/`, { headers: getAuthHeaders() });
+  if (!res.ok) throw new Error('Failed to load chat history');
+  return res.json();
+}
+
 export async function lessonChat(
   scenarioId: number,
-  message: string,
-  history: { role: 'user' | 'assistant'; content: string }[]
+  message: string
 ): Promise<{ reply: string }> {
   const res = await fetch(`${API_BASE}/scenarios/${scenarioId}/chat/`, {
     method: 'POST',
     headers: getAuthHeaders(),
-    body: JSON.stringify({ message, history }),
+    body: JSON.stringify({ message }),
+  });
+  if (!res.ok) throw new Error('AI tutor is unavailable');
+  return res.json();
+}
+
+export async function getGlobalChatHistory(): Promise<{ id: string; role: 'user' | 'assistant'; content: string }[]> {
+  const res = await fetch(`${API_BASE}/chat/`, { headers: getAuthHeaders() });
+  if (!res.ok) throw new Error('Failed to load chat history');
+  return res.json();
+}
+
+export async function globalChat(message: string): Promise<{ reply: string }> {
+  const res = await fetch(`${API_BASE}/chat/`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ message }),
   });
   if (!res.ok) throw new Error('AI tutor is unavailable');
   return res.json();

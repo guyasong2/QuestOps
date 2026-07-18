@@ -177,3 +177,17 @@ class StudentSkill(models.Model):
         return f"{self.user.username} / {self.track.slug}: {self.xp} XP ({self.level})"
 
 
+class ChatMessage(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chat_messages')
+    scenario = models.ForeignKey(Scenario, on_delete=models.CASCADE, related_name='chat_messages', null=True, blank=True)
+    role = models.CharField(max_length=20, choices=[('user', 'User'), ('assistant', 'Assistant')])
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['created_at']
+
+    def __str__(self):
+        return f"[{self.role}] {self.user.username} - {self.created_at.strftime('%Y-%m-%d %H:%M')}"
+
+

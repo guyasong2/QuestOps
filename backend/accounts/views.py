@@ -7,9 +7,13 @@ from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from rest_framework import serializers
+from PIL import Image
+import logging
 
 from .models import UserProfile
 from tracks.models import Track
+
+logger = logging.getLogger(__name__)
 
 
 # ─── Serializers ──────────────────────────────────────────────────────────────
@@ -177,11 +181,19 @@ class UpdateAvatarView(APIView):
             return Response({'error': 'No file provided.'}, status=status.HTTP_400_BAD_REQUEST)
 
         avatar_file = request.FILES['avatar']
-        # Basic validation
-        if not avatar_file.content_type.startswith('image/'):
-            return Response({'error': 'File must be an image.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Size check first (cheap)
         if avatar_file.size > 5 * 1024 * 1024:  # 5MB
             return Response({'error': 'Image must be under 5MB.'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Verify actual image bytes with Pillow — MIME header from client is not trusted
+        try:
+            img = Image.open(avatar_file)
+            img.verify()  # raises if not a valid image
+        except Exception:
+            return Response({'error': 'File must be a valid image.'}, status=status.HTTP_400_BAD_REQUEST)
+        finally:
+            avatar_file.seek(0)  # reset stream so Django can save it
 
         profile, _ = UserProfile.objects.get_or_create(user=request.user)
         profile.avatar = avatar_file

@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import TrackListView, ScenarioDetailView, StageSubmitView, StudentSkillView, LessonChatView
+from .views import TrackListView, ScenarioDetailView, StageSubmitView, StudentSkillView, LessonChatView, GlobalChatView
 
 urlpatterns = [
     path('tracks/', TrackListView.as_view(), name='track-list'),
@@ -7,4 +7,5 @@ urlpatterns = [
     path('stages/<int:pk>/submit/', StageSubmitView.as_view(), name='stage-submit'),
     path('skills/me/', StudentSkillView.as_view(), name='student-skills'),
     path('scenarios/<int:pk>/chat/', LessonChatView.as_view(), name='lesson-chat'),
+    path('chat/', GlobalChatView.as_view(), name='global-chat'),
 ]

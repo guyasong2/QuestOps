@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import Editor from 'react-simple-code-editor';
+import _Editor from 'react-simple-code-editor';
+const Editor: any = (_Editor as any).default || _Editor;
 import Prism from 'prismjs';
 import 'prismjs/components/prism-javascript';
 import 'prismjs/components/prism-python';
@@ -102,7 +103,7 @@ export function CodeSandbox({ onSubmit, disabled }: CodeSandboxProps) {
               <Editor
                 value={code}
                 onValueChange={setCode}
-                highlight={(c) => Prism.highlight(c, Prism.languages[language] || Prism.languages.javascript, language)}
+                highlight={(c: string) => Prism.highlight(c, Prism.languages[language] || Prism.languages.javascript, language)}
                 padding={16}
                 disabled={disabled}
                 style={{
@@ -135,7 +136,7 @@ export function CodeSandbox({ onSubmit, disabled }: CodeSandboxProps) {
               <Editor
                 value="/* Ignore and do not change the code below */\n// #region main---"
                 onValueChange={() => {}}
-                highlight={(c) => Prism.highlight(c, Prism.languages[language] || Prism.languages.javascript, language)}
+                highlight={(c: string) => Prism.highlight(c, Prism.languages[language] || Prism.languages.javascript, language)}
                 padding={16}
                 disabled={true}
                 style={{

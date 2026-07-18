@@ -19,6 +19,7 @@ import type { ScenarioDetail, Stage } from '../lib/api';
 import { CodeSandbox } from '../components/CodeEditor';
 import { TerminalSandbox } from '../components/TerminalEmulator';
 import { DragDropStage } from '../components/DragDropStage';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 
 // ─── Timer ────────────────────────────────────────────────────────────────────
 function Timer({ totalSeconds, isActive, onExpire }: { totalSeconds: number; isActive: boolean; onExpire: () => void }) {
@@ -177,7 +178,7 @@ function SceneNode({
           status === 'done' ? 'text-green-400 bg-green-900/30' :
             'text-gray-600'
         }`}>
-        {stage.label.replace('_', ' ')}
+        {stage.label ? stage.label.replace('_', ' ') : 'STAGE'}
       </span>
 
       {status === 'active' && (
@@ -290,7 +291,8 @@ export default function Play() {
   const rightWidth = isSandbox ? 'w-[55%]' : 'w-[420px]';
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden bg-bg text-text">
+    <ErrorBoundary>
+      <div className="h-screen flex flex-col overflow-hidden bg-bg text-text">
       {/* HUD Header */}
       <header className="h-14 bg-surface border-b border-border flex items-center justify-between px-6 shrink-0 z-20">
         <div className="flex items-center gap-4">
@@ -334,8 +336,8 @@ export default function Play() {
                       'bg-transparent border-border text-gray-600'
                   }`}
               >
-                {STAGE_META[s.label]?.icon}
-                {s.label.replace('_', ' ')}
+                {STAGE_META[s.label]?.icon || <HiOutlineShieldCheck className="w-4 h-4" />}
+                {s.label ? s.label.replace('_', ' ') : 'STAGE'}
               </div>
             ))}
           </div>
@@ -367,8 +369,11 @@ export default function Play() {
 
           {/* Connection lines between nodes */}
           <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-20">
-            {STAGE_POSITIONS.slice(0, scenario.stages.length - 1).map((pos, i) => {
+            {scenario.stages.slice(0, scenario.stages.length - 1).map((_, i) => {
+              const pos = STAGE_POSITIONS[i];
               const next = STAGE_POSITIONS[i + 1];
+              if (!pos || !next) return null;
+              
               return (
                 <line
                   key={i}
@@ -439,9 +444,9 @@ export default function Play() {
               {/* Panel header */}
               <div className="px-5 py-4 border-b border-border bg-surface flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-3">
-                  <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold ${STAGE_META[activeStage.label]?.color} border-current bg-current/10`}>
-                    {STAGE_META[activeStage.label]?.icon}
-                    {activeStage.label.replace('_', ' ').toUpperCase()}
+                  <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-bold ${STAGE_META[activeStage.label]?.color || 'text-gray-400'} border-current bg-current/10`}>
+                    {STAGE_META[activeStage.label]?.icon || <HiOutlineShieldCheck className="w-4 h-4" />}
+                    {activeStage.label ? activeStage.label.replace('_', ' ').toUpperCase() : 'STAGE'}
                   </div>
                   <span className="text-gray-600 text-sm">Stage {activeStage.order} / {scenario.stages.length}</span>
                   {activeStage.answer_type === 'code_editor' && (
@@ -556,6 +561,7 @@ export default function Play() {
           )}
         </AnimatePresence>
       </div>
-    </div>
+      </div>
+    </ErrorBoundary>
   );
 }

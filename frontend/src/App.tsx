@@ -9,6 +9,7 @@ import Favorites from './pages/Favorites';
 import Community from './pages/Community';
 import Profile from './pages/Profile';
 import Play from './pages/Play';
+import Chat from './pages/Chat';
 import { Toaster } from 'react-hot-toast';
 import './App.css';
 
@@ -53,6 +54,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <Community />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/chat"
+            element={
+              <ProtectedRoute>
+                <Chat />
               </ProtectedRoute>
             }
           />

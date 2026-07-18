@@ -3,8 +3,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
+import logging
 
-from .models import Track, Scenario, Stage, Attempt, StudentSkill
+from .models import Track, Scenario, Stage, Attempt, StudentSkill, ChatMessage
 from .serializers import (
     TrackSerializer,
     ScenarioDetailSerializer,
@@ -13,12 +14,15 @@ from .serializers import (
 )
 from .services import AIAnswerChecker, XPService, ScenarioGenerator
 
+logger = logging.getLogger(__name__)
+
 
 class TrackListView(generics.ListAPIView):
     """
     GET /api/tracks/
     Returns all tracks with their scenarios (used by the Catalog page).
     """
+    permission_classes = [IsAuthenticated]
     queryset = Track.objects.prefetch_related('scenarios').all()
     serializer_class = TrackSerializer
 
@@ -33,6 +37,7 @@ class ScenarioDetailView(generics.RetrieveAPIView):
         drag_drop → draggable list (items from drag_items, student reorders)
         free_text → textarea (AI-graded open answer)
     """
+    permission_classes = [IsAuthenticated]
     queryset = Scenario.objects.prefetch_related('stages').all()
     serializer_class = ScenarioDetailSerializer
 
@@ -92,11 +97,20 @@ class StudentSkillView(APIView):
 
 class LessonChatView(APIView):
     """
+    GET /api/scenarios/<id>/chat/
+    Returns chat history for this scenario and user.
     POST /api/scenarios/<id>/chat/
     Handles a conversational AI tutoring session about a scenario's lesson.
-    Body: { "message": "...", "history": [{"role": "user"|"assistant", "content": "..."}] }
     """
     permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk):
+        scenario = get_object_or_404(Scenario, pk=pk)
+        history = ChatMessage.objects.filter(user=request.user, scenario=scenario).order_by('created_at')
+        return Response([
+            {'id': msg.id, 'role': msg.role, 'content': msg.content}
+            for msg in history
+        ])
 
     def post(self, request, pk):
         scenario = get_object_or_404(
@@ -104,10 +118,14 @@ class LessonChatView(APIView):
         )
 
         message = request.data.get('message', '').strip()
-        history = request.data.get('history', [])
 
         if not message:
             return Response({'error': 'Message is required.'}, status=status.HTTP_400_BAD_REQUEST)
+        if len(message) > 4000:
+            return Response({'error': 'Message too long (max 4000 characters).'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Save user message
+        ChatMessage.objects.create(user=request.user, scenario=scenario, role='user', content=message)
 
         system_prompt = (
             f"You are an expert AI tutor for the QuestOps Escape-the-Lab platform.\n"
@@ -121,18 +139,74 @@ class LessonChatView(APIView):
             f"to think critically instead."
         )
 
+        history_qs = ChatMessage.objects.filter(user=request.user, scenario=scenario).order_by('created_at')
+        
         messages = [{"role": "system", "content": system_prompt}]
-        for entry in history[-10:]:  # cap history at 10 exchanges
-            if entry.get('role') in ('user', 'assistant') and entry.get('content'):
-                messages.append({'role': entry['role'], 'content': entry['content']})
-        messages.append({'role': 'user', 'content': message})
+        for msg in list(history_qs)[-10:]:  # cap history at 10 exchanges for context
+            messages.append({'role': msg.role, 'content': msg.content})
 
         try:
             generator = ScenarioGenerator()
             reply = generator._backend._chat(messages, expect_json=False, timeout=60)
+            
+            # Save assistant reply
+            ChatMessage.objects.create(user=request.user, scenario=scenario, role='assistant', content=reply)
         except Exception as exc:
+            logger.error("AI tutor error (scenario %s): %s", pk, exc, exc_info=True)
             return Response(
-                {'error': f'AI tutor is unavailable: {exc}'},
+                {'error': 'AI tutor is temporarily unavailable. Please try again later.'},
+                status=status.HTTP_503_SERVICE_UNAVAILABLE
+            )
+
+        return Response({'reply': reply})
+
+
+class GlobalChatView(APIView):
+    """
+    GET /api/chat/
+    Returns global chat history.
+    POST /api/chat/
+    Handles a global conversational AI tutoring session.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        history = ChatMessage.objects.filter(user=request.user, scenario__isnull=True).order_by('created_at')
+        return Response([
+            {'id': msg.id, 'role': msg.role, 'content': msg.content}
+            for msg in history
+        ])
+
+    def post(self, request):
+        message = request.data.get('message', '').strip()
+
+        if not message:
+            return Response({'error': 'Message is required.'}, status=status.HTTP_400_BAD_REQUEST)
+        if len(message) > 4000:
+            return Response({'error': 'Message too long (max 4000 characters).'}, status=status.HTTP_400_BAD_REQUEST)
+
+        ChatMessage.objects.create(user=request.user, scenario=None, role='user', content=message)
+
+        system_prompt = (
+            "You are an expert AI assistant for the QuestOps Escape-the-Lab platform. "
+            "Help the user with general cybersecurity, software engineering, and cloud infrastructure questions. "
+            "Provide detailed answers, examples, and code blocks."
+        )
+
+        history_qs = ChatMessage.objects.filter(user=request.user, scenario__isnull=True).order_by('created_at')
+        
+        messages = [{"role": "system", "content": system_prompt}]
+        for msg in list(history_qs)[-10:]:
+            messages.append({'role': msg.role, 'content': msg.content})
+
+        try:
+            generator = ScenarioGenerator()
+            reply = generator._backend._chat(messages, expect_json=False, timeout=60)
+            ChatMessage.objects.create(user=request.user, scenario=None, role='assistant', content=reply)
+        except Exception as exc:
+            logger.error("Global AI chat error: %s", exc, exc_info=True)
+            return Response(
+                {'error': 'AI assistant is temporarily unavailable. Please try again later.'},
                 status=status.HTTP_503_SERVICE_UNAVAILABLE
             )
 
