@@ -1,6 +1,12 @@
 {
   "rewrites": [
-    { "source": "/api/:match*", "destination": "http://ec2-98-92-170-134.compute-1.amazonaws.com/api/:match*" },
-    { "source": "/(.*)", "destination": "/" }
+    {
+      "source": "/api/:match*",
+      "destination": "http://ec2-98-92-170-134.compute-1.amazonaws.com/api/:match*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/"
+    }
   ]
 }
