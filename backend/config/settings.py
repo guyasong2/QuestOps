@@ -35,6 +35,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',     # WhiteNoise must be right after SecurityMiddleware
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',          # must be before CommonMiddleware
     'django.middleware.common.CommonMiddleware',
@@ -63,10 +64,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
+# If DEBUG is False (prod), point the SQLite DB to the mounted /app/data volume.
+if DEBUG:
+    db_path = BASE_DIR / 'db.sqlite3'
+else:
+    db_path = Path('/app/data/db.sqlite3')
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': db_path,
     }
 }
 
@@ -83,8 +90,39 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# WhiteNoise storage configuration
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+
+# --- Media Storage (Local vs S3) ---
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# If in production, MEDIA_ROOT should point to the mounted /app/media volume
+MEDIA_ROOT = BASE_DIR / 'media' if DEBUG else Path('/app/media')
+
+# AWS S3 Settings (for media uploads)
+AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID', default='')
+AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY', default='')
+AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME', default='')
+AWS_S3_REGION_NAME = config('AWS_S3_REGION_NAME', default='us-east-1')
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+AWS_S3_FILE_OVERWRITE = False
+AWS_DEFAULT_ACL = 'public-read'
+AWS_QUERYSTRING_AUTH = False  # Avoid signed URLs if bucket is public
+
+if AWS_STORAGE_BUCKET_NAME:
+    # Use S3 for user-uploaded media
+    STORAGES["default"] = {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+    }
+    MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
 
 # --- CORS ---
 CORS_ALLOWED_ORIGINS = [
@@ -188,3 +226,10 @@ OLLAMA_MODEL = config('OLLAMA_MODEL', default='qwen2.5-coder:7b')
 DEEPSEEK_API_KEY = config('DEEPSEEK_API_KEY', default='')
 DEEPSEEK_MODEL = config('DEEPSEEK_MODEL', default='deepseek-v4-flash')
 DEEPSEEK_API_BASE_URL = config('DEEPSEEK_API_BASE_URL', default='https://api.deepseek.com')
+
+# --- Production Security Headers ---
+SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=False, cast=bool)
+SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=False, cast=bool)
+CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=False, cast=bool)
+SECURE_HSTS_SECONDS = config('SECURE_HSTS_SECONDS', default=0, cast=int)
+
