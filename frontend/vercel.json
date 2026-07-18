@@ -2,8 +2,8 @@
   "trailingSlash": true,
   "rewrites": [
     {
-      "source": "/api/:match*",
-      "destination": "http://ec2-98-92-170-134.compute-1.amazonaws.com/api/:match*"
+      "source": "/api/(.*)",
+      "destination": "http://ec2-98-92-170-134.compute-1.amazonaws.com/api/$1"
     },
     {
       "source": "/(.*)",
